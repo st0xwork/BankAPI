@@ -1,0 +1,22 @@
+# PyCharm
+.idea/
+
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# Allure
+allure-results/
+allure-report/
+
+# macOS
+.DS_Store
+
+# Local configuration with credentials
+resources/urls.properties
