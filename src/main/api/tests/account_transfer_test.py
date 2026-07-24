@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 
 from src.main.api.classes.api_manager import ApiManager
 from src.main.api.db.crud.account_crud import AccountCrudDb
+from src.main.api.models.account_transfer_request import AccountTransferRequest
+from src.main.api.models.create_user_request import CreateUserRequest
 
 @pytest.mark.api
 class TestAccountTransfer:
