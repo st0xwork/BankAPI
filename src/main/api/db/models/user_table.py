@@ -12,4 +12,4 @@ class User(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     def __repr__(self):
-        return f"<Account(id={self.id}, user_id={self.user_id}, number={self.number}, balance={self.balance})>"
+        return f"<User(id={self.id}, username={self.username}, role={self.role})>"

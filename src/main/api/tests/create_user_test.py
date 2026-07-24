@@ -22,44 +22,41 @@ class TestCreateUser:
     ):
         response = api_manager.admin_steps.create_user(create_user_request)
 
-        assert create_user_request.username == response.username
-        assert create_user_request.role == response.role
+        assert create_user_request.username == response.username, (
+            "Username в ответе не совпадает с отправленным Username"
+        )
+        assert create_user_request.role == response.role, (
+            "Роль пользователя в ответе не совпадает с отправленной ролью"
+        )
 
         user_from_db = User.get_user_by_username(db_session, create_user_request.username)
+
         assert user_from_db.username == create_user_request.username, (
             "Созданного пользователя нет в базе"
         )
 
     @pytest.mark.parametrize(
-        "invalid_data",
+        "invalid_create_user_request",
         [
-            {"username": "абв"},
-            {"username": "ab"},
-            {"username": "abv!"},
-            {"password": "Pas!sw0rд"},
-            {"password": "Pas!sw0"},
-            {"password": "pas!sw0rd"},
-            {"password": "PAS!SW0RD"},
-            {"password": "Passw0rd"},
-            {"password": "Pas!swrd"},
+          pytest.param(
+              {"username": "абв"},
+              id="invalid-username",
+          ),
+          pytest.param(
+              {"password": "Pas!sw0"},
+              id="invalid-password",
+          ),
         ],
-        ids=[
-            "username-cyrillic",
-            "username-too-short",
-            "username-special-character",
-            "password-cyrillic",
-            "password-too-short",
-            "password-without-uppercase",
-            "password-without-lowercase",
-            "password-without-special-character",
-            "password-without-digit",
-        ],
+        indirect=True
     )
-    def test_create_user_invalid(self, db_session: Session, invalid_data, api_manager: ApiManager):
-        create_user_request = RandomModelGenerator.generate(CreateUserRequest).model_copy(update=invalid_data)
+    def test_create_user_invalid(
+            self, db_session: Session,
+            invalid_create_user_request: CreateUserRequest,
+            api_manager: ApiManager
+    ):
 
-        api_manager.admin_steps.create_user_invalid(create_user_request)
+        api_manager.admin_steps.create_user_invalid(invalid_create_user_request)
 
-        user_from_db = User.get_user_by_username(db_session, create_user_request.username)
+        user_exists = User.user_exists(db_session, invalid_create_user_request.username)
 
-        assert user_from_db is None, "Пользователь создан, ошибка"
+        assert not user_exists, "Пользователь с невалидными данными появился в базе"

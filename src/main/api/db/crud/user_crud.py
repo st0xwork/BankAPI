@@ -15,3 +15,7 @@ class UserCrudDb:
         db.commit()
         db.refresh(user)
         return user
+
+    @staticmethod
+    def user_exists(db: Session,  username: str) -> bool:
+        return db.query(User).filter_by(username=username).first() is not None
