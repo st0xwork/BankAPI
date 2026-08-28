@@ -2,16 +2,20 @@ import allure
 from playwright.sync_api import Page, expect
 
 from src.main.ui.pages.catalog_page import CatalogPage
+from src.main.ui.pages.login_page import LoginPage
 
 
 class CatalogSteps:
     def __init__(self, page: Page):
         self.page = page
         self.catalog = CatalogPage(page)
+        self.login_page = LoginPage(page)
 
     @allure.step("Логинимся пользователем {username}")
     def login(self, username: str, password: str):
-        self.catalog.login(username, password)
+        self.login_page.open()
+        self.login_page.login(username, password)
+        expect(self.catalog.product_cards.first).to_be_visible()
         return self
 
     @allure.step("Добавляем товар в корзину: {product_name}")

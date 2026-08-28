@@ -1,0 +1,14 @@
+.git
+.github
+.idea
+.pytest_cache
+.venv
+.env
+.DS_Store
+__pycache__
+*.py[cod]
+allure-report
+allure-results
+reports
+test-results
+resources/urls.properties

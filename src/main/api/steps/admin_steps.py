@@ -1,3 +1,4 @@
+from src.main.api.configs.config import Config
 from src.main.api.foundation.endpoint import Endpoint
 from src.main.api.foundation.requesters.crud_requester import CrudRequester
 from src.main.api.foundation.requesters.validate_crud_requester import ValidateCrudRequester
@@ -9,9 +10,16 @@ from src.main.api.steps.base_steps import BaseSteps
 
 
 class AdminSteps(BaseSteps):
+    @staticmethod
+    def _auth_headers() -> dict[str, str]:
+        return RequestSpecs.auth_headers(
+            username=Config.fetch("adminUsername", "admin"),
+            password=Config.require("adminPassword"),
+        )
+
     def create_user(self, create_user_request: CreateUserRequest):
         response = ValidateCrudRequester(
-            RequestSpecs.auth_headers(username="admin", password="123456"),
+            self._auth_headers(),
             Endpoint.ADMIN_CREATE_USER,
             ResponseSpecs.request_ok(),
         ).post(create_user_request)
@@ -21,7 +29,7 @@ class AdminSteps(BaseSteps):
 
     def create_user_invalid(self, create_user_request: CreateUserRequest):
         response = CrudRequester(
-            RequestSpecs.auth_headers(username="admin", password="123456"),
+            self._auth_headers(),
             Endpoint.ADMIN_CREATE_USER,
             ResponseSpecs.request_bad(),
         ).post(create_user_request)
@@ -29,7 +37,7 @@ class AdminSteps(BaseSteps):
 
     def delete_user(self, user_id: int):
         CrudRequester(
-            RequestSpecs.auth_headers(username="admin", password="123456"),
+            self._auth_headers(),
             Endpoint.ADMIN_DELETE_USER,
             ResponseSpecs.request_ok(),
         ).delete(user_id)

@@ -1,7 +1,7 @@
 import allure
 
 from playwright.sync_api import Page
-from ui.pages.checkout_page import CheckoutPage
+from src.main.ui.pages.checkout_page import CheckoutPage
 
 
 class CheckoutSteps:

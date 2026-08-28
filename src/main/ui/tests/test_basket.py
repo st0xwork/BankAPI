@@ -1,13 +1,19 @@
-from ui.steps.catalog_steps import CatalogSteps
-from ui.steps.checkout_steps import CheckoutSteps
-from ui.steps.basket_steps import BasketSteps
+import pytest
+
+from src.main.ui.steps.catalog_steps import CatalogSteps
+from src.main.ui.steps.checkout_steps import CheckoutSteps
+from src.main.ui.steps.basket_steps import BasketSteps
+from src.main.utils.constants import TestUsers
+
+
+pytestmark = pytest.mark.ui
 
 
 def test_add_item_and_check_in_cart(page):
     catalog = CatalogSteps(page)
     basket = BasketSteps(page)
 
-    catalog.login("standard_user", "secret_sauce")
+    catalog.login(TestUsers.STANDARD, TestUsers.PASSWORD)
     catalog.add_to_cart("Sauce Labs Backpack")
 
     basket.open_cart()
@@ -18,7 +24,7 @@ def test_add_items_and_check_in_cart(page):
     catalog = CatalogSteps(page)
     basket = BasketSteps(page)
 
-    catalog.login("standard_user", "secret_sauce")
+    catalog.login(TestUsers.STANDARD, TestUsers.PASSWORD)
     catalog.add_to_cart("Sauce Labs Fleece Jacket")
     catalog.add_to_cart("Sauce Labs Bolt T-Shirt")
 
@@ -31,7 +37,7 @@ def test_remove_item_from_cart(page):
     catalog = CatalogSteps(page)
     basket = BasketSteps(page)
 
-    catalog.login("standard_user", "secret_sauce")
+    catalog.login(TestUsers.STANDARD, TestUsers.PASSWORD)
     catalog.add_to_cart("Sauce Labs Fleece Jacket")
 
     basket.open_cart()
@@ -45,7 +51,7 @@ def test_remove_items_from_cart(page):
     catalog = CatalogSteps(page)
     basket = BasketSteps(page)
 
-    catalog.login("standard_user", "secret_sauce")
+    catalog.login(TestUsers.STANDARD, TestUsers.PASSWORD)
     catalog.add_to_cart("Sauce Labs Backpack")
     catalog.add_to_cart("Test.allTheThings() T-Shirt (Red)")
 
@@ -67,7 +73,7 @@ def test_checkout_multiple_items(page):
     basket = BasketSteps(page)
     checkout = CheckoutSteps(page)
 
-    catalog.login("standard_user", "secret_sauce")
+    catalog.login(TestUsers.STANDARD, TestUsers.PASSWORD)
 
     catalog.add_to_cart("Sauce Labs Fleece Jacket")
     catalog.add_to_cart("Sauce Labs Bolt T-Shirt")
@@ -93,19 +99,15 @@ def test_checkout_multiple_items(page):
     )
 
 
-def test_checkout_without_items(page):
+def test_checkout_requires_postal_code(page):
     catalog = CatalogSteps(page)
     basket = BasketSteps(page)
     checkout = CheckoutSteps(page)
 
-    catalog.login("standard_user", "secret_sauce")
+    catalog.login(TestUsers.STANDARD, TestUsers.PASSWORD)
+    catalog.add_to_cart("Sauce Labs Backpack")
 
     basket.open_cart()
-
-    items = basket.get_item_names()
-
-    assert len(items) == 0, "Корзина не пуста"
-
     basket.checkout()
 
     checkout.start_checkout(
@@ -116,7 +118,6 @@ def test_checkout_without_items(page):
 
     error_text = checkout.get_error_text()
 
-    assert error_text != "", (
-        "Ожидалась ошибка при оформлении пустой корзины"
+    assert "Postal Code is required" in error_text, (
+        "Ожидалась ошибка обязательного почтового индекса"
     )
-

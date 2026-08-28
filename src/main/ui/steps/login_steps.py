@@ -1,11 +1,10 @@
 import allure
-from ui.pages.login_page import LoginPage
 from playwright.sync_api import Page
+
+from src.main.ui.pages.login_page import LoginPage
 
 
 class LoginSteps:
-    LOGIN_URL = "https://www.saucedemo.com/"
-
     def __init__(self, page: Page):
         self.page = page
         self.login_page = LoginPage(page)
@@ -20,6 +19,6 @@ class LoginSteps:
         self.login_page.login(username, password)
         return self
 
-    @allure.step("Получаем тест ошибки при логине")
-    def get_error_teext(self) -> str:
+    @allure.step("Получаем текст ошибки при логине")
+    def get_error_text(self) -> str:
         return self.login_page.get_error_text()

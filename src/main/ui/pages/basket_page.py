@@ -1,5 +1,5 @@
-from playwright.sync_api import Page, expect
-from ui.pages.base_page import BasePage
+from playwright.sync_api import Page
+from src.main.ui.pages.base_page import BasePage
 
 
 class BasketPage(BasePage):
@@ -20,12 +20,6 @@ class BasketPage(BasePage):
     def remove_item(self, product_name: str):
         card = self.item_cards.filter(has_text=product_name)
         card.locator("button").click()
-
-    def expect_item_in_cart(self, product_name: str):
-        expect(self.item_cards.filter(has_text=product_name)).to_be_visible()
-
-    def expect_item_not_in_cart(self, product_name: str):
-        expect(self.item_cards.filter(has_text=product_name)).not_to_be_visible()
 
     def get_item_names(self) -> list[str]:
         return self.item_cards.locator(".inventory_item_name").all_text_contents()

@@ -14,9 +14,12 @@ __pycache__/
 # Allure
 allure-results/
 allure-report/
+reports/
+test-results/
 
 # macOS
 .DS_Store
 
 # Local configuration with credentials
 resources/urls.properties
+.env

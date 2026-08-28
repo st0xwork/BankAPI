@@ -1,6 +1,7 @@
 import allure
-from ui.pages.basket_page import BasketPage
 from playwright.sync_api import Page, expect
+
+from src.main.ui.pages.basket_page import BasketPage
 
 
 class BasketSteps:
@@ -16,12 +17,14 @@ class BasketSteps:
 
     @allure.step("Проверяем, что товар {product_name} есть в корзине")
     def expect_item_in_cart(self, product_name: str):
-        self.basket.expect_item_in_cart(product_name)
+        item = self.basket.item_cards.filter(has_text=product_name)
+        expect(item).to_be_visible()
         return self
 
     @allure.step("Проверяем, что товара {product_name} нет в корзине")
     def expect_item_not_in_cart(self, product_name: str):
-        self.basket.expect_item_not_in_cart(product_name)
+        item = self.basket.item_cards.filter(has_text=product_name)
+        expect(item).not_to_be_visible()
         return self
 
     @allure.step("Удаляем товар из корзины: {product_name}")
@@ -40,4 +43,4 @@ class BasketSteps:
 
     @allure.step("Получаем общую сумму товаров в корзине")
     def get_items_total_price(self) -> float:
-        return self.basket.get_items_total_price()
+        return self.basket.get_item_total_price()
